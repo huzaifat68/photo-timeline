@@ -247,6 +247,7 @@ export function AddMemoryModal({ onClose, onSubmit }: AddMemoryModalProps) {
       <div 
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-lg md:max-w-2xl liquid-glass rounded-2xl sm:rounded-3xl border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.9)] max-h-[92vh] flex flex-col bg-black/85 overflow-hidden cursor-default"
+        style={{ willChange: 'transform', transform: 'translate3d(0,0,0)' }}
       >
         {/* Glow Effects - GPU-native radial glows */}
         <div 
@@ -298,7 +299,7 @@ export function AddMemoryModal({ onClose, onSubmit }: AddMemoryModalProps) {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="E.g. Under the Neon Grid"
                   className="w-full px-5 py-3.5 liquid-glass rounded-full text-white placeholder-white/20 focus:outline-none transition-all font-body text-xs focus:border-white/20 font-light"
-                  style={{ borderColor: `${color}40` }}
+                  style={{ borderColor: `${color}40`, willChange: 'transform', transform: 'translate3d(0,0,0)' }}
                 />
               </div>
 
@@ -388,7 +389,7 @@ export function AddMemoryModal({ onClose, onSubmit }: AddMemoryModalProps) {
                   onChange={(e) => setTagsString(e.target.value)}
                   placeholder="E.g. dream, summer, night (separated by commas)"
                   className="w-full px-5 py-3.5 liquid-glass rounded-full text-white placeholder-white/20 focus:outline-none transition-all font-body text-xs focus:border-white/20 font-light outline-none"
-                  style={{ borderColor: `${color}40` }}
+                  style={{ borderColor: `${color}40`, willChange: 'transform', transform: 'translate3d(0,0,0)' }}
                 />
               </div>
 
@@ -643,6 +644,7 @@ export function AddMemoryModal({ onClose, onSubmit }: AddMemoryModalProps) {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Recreate the feeling, context, soundscape, or emotion of this moment..."
               className="w-full px-5 py-4 liquid-glass rounded-2xl text-white placeholder-white/20 focus:outline-none focus:border-white/20 transition-all font-body text-xs font-light resize-none leading-relaxed outline-none"
+              style={{ willChange: 'transform', transform: 'translate3d(0,0,0)' }}
             />
           </div>
 
