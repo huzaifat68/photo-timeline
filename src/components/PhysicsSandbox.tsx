@@ -24,6 +24,25 @@ export function PhysicsSandbox({ memories, onSelectMemory }: PhysicsSandboxProps
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [activeHoverId, setActiveHoverId] = useState<string | null>(null);
   const [engineReady, setEngineReady] = useState(false);
+  const [isSandboxVisible, setIsSandboxVisible] = useState(true);
+
+  // 1a. IntersectionObserver to detect when sandbox is scrolled out of viewport
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSandboxVisible(entry.isIntersecting);
+      },
+      { threshold: 0.02 } // Trigger when at least 2% of the sandbox is visible
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   // Card dimensions for physics body creation dynamically computed based on viewport width
   const isMobile = dimensions.width < 768;
@@ -83,7 +102,6 @@ export function PhysicsSandbox({ memories, onSelectMemory }: PhysicsSandboxProps
     // Create runner
     const runner = Runner.create();
     runnerRef.current = runner;
-    Runner.run(runner, engine);
 
     // Create boundaries to contain the memory nodes
     const wallThickness = 100;
@@ -253,6 +271,25 @@ export function PhysicsSandbox({ memories, onSelectMemory }: PhysicsSandboxProps
       }
     });
   }, [memories, cardWidth, cardHeight, engineReady, dimensions]);
+
+  // 5. Dynamic Physics Pause/Resume on Visibility Change (IntersectionObserver)
+  useEffect(() => {
+    const runner = runnerRef.current;
+    const engine = engineRef.current;
+    if (!engineReady || !runner || !engine) return;
+
+    if (isSandboxVisible) {
+      Matter.Runner.run(runner, engine);
+      console.log('[PhysicsSandbox] Viewport Visible: Resumed Matter.js Runner.');
+    } else {
+      Matter.Runner.stop(runner);
+      console.log('[PhysicsSandbox] Viewport Hidden: Paused Matter.js Runner.');
+    }
+
+    return () => {
+      if (runner) Matter.Runner.stop(runner);
+    };
+  }, [isSandboxVisible, engineReady]);
 
   // Direct Drag Tracking Refs for smooth micro-gravity bridge
   interface DragInfo {

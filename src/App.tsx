@@ -74,6 +74,18 @@ export default function App() {
     user
   } = useMemories();
 
+  // --- Mobile Screen & Capabilities Detection ---
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobileQuery = window.innerWidth < 768 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      setIsMobile(mobileQuery);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // --- Auth Screen States ---
   const [accessGranted, setAccessGranted] = useState(false);
   const [authInitializing, setAuthInitializing] = useState(true);
@@ -262,7 +274,7 @@ export default function App() {
     let frameCount = 0;
     let lastFPSUpdate = performance.now();
 
-    console.log('[Boomerang] Re-initializing loop engine. Fallback native mode:', corsBlocked);
+    console.log('[Boomerang] Re-initializing loop engine. Fallback native mode:', corsBlocked || isMobile);
 
     const startEngine = () => {
       if (!active) return;
@@ -273,8 +285,8 @@ export default function App() {
         return;
       }
 
-      // If already CORS blocked, configure native hardware-accelerated video fallback loop
-      if (corsBlocked) {
+      // If already CORS blocked or on mobile, configure native hardware-accelerated video fallback loop
+      if (corsBlocked || isMobile) {
         video.loop = true;
         video.muted = true;
         video.playsInline = true;
@@ -347,7 +359,7 @@ export default function App() {
       };
 
       const seekToNext = () => {
-        if (!active || isSeeking || corsBlocked) return;
+        if (!active || isSeeking || corsBlocked || isMobile) return;
 
         const step = getStepSize();
         currentPosition += direction * step;
@@ -367,7 +379,7 @@ export default function App() {
       };
 
       const onSeeked = () => {
-        if (!active || corsBlocked) return;
+        if (!active || corsBlocked || isMobile) return;
         isSeeking = false;
 
         drawFrame();
@@ -385,7 +397,7 @@ export default function App() {
 
         // Request next frame seek step
         requestAnimationFrame(() => {
-          if (active && !corsBlocked) seekToNext();
+          if (active && !corsBlocked && !isMobile) seekToNext();
         });
       };
 
@@ -418,10 +430,20 @@ export default function App() {
       cleanupEngine?.();
       console.log('[Boomerang] Background loop cleaned up.');
     };
-  }, [boomerangSpeed, corsBlocked]);
+  }, [boomerangSpeed, corsBlocked, isMobile]);
 
   // --- Effect 3: High-Performance GPU Parallax Tracking ---
   useEffect(() => {
+    // Disable high-frequency mousemove parallax listeners on mobile or touch-capable screens
+    const isTouchCapable = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || isMobile;
+    if (isTouchCapable) {
+      if (videoBgRef.current) {
+        // Direct premium hardware accelerated centered transform
+        videoBgRef.current.style.transform = 'translate3d(0px, 0px, 0px) scale(1.08)';
+      }
+      return;
+    }
+
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
@@ -456,7 +478,7 @@ export default function App() {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animFrameId);
     };
-  }, []);
+  }, [isMobile]);
 
   // --- Helper: Smooth Scroll to workspace ---
   const handleScrollToWorkspace = () => {
@@ -681,7 +703,7 @@ export default function App() {
           className={`w-full h-full object-cover transition-all duration-[1200ms] ease-in-out ${
             !accessGranted ? 'filter blur-[16px] opacity-60 scale-[1.05]' : 'opacity-100 scale-100'
           }`}
-          style={{ display: (corsBlocked || !framesReady) ? 'block' : 'none' }}
+          style={{ display: (corsBlocked || isMobile || !framesReady) ? 'block' : 'none' }}
         />
         {/* Canvas: renders boomerang frames if CORS is allowed */}
         <canvas
@@ -689,7 +711,7 @@ export default function App() {
           className={`w-full h-full object-cover transition-all duration-[1200ms] ease-in-out ${
             !accessGranted ? 'filter blur-[16px] opacity-60 scale-[1.05]' : 'opacity-100 scale-100'
           }`}
-          style={{ display: (corsBlocked || !framesReady) ? 'none' : 'block' }}
+          style={{ display: (corsBlocked || isMobile || !framesReady) ? 'none' : 'block' }}
         />
       </div>
 
@@ -1151,7 +1173,7 @@ export default function App() {
         </div>
 
         {/* MOBILE FLOATING BOTTOM BAR NAVIGATION: Visible only on small viewports */}
-        <div className="flex md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 w-[88%] max-w-[340px] pointer-events-auto justify-around items-center px-2 py-2 liquid-glass-strong rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.6)] border border-white/10 bg-black/85 backdrop-blur-lg select-none pb-safe z-50">
+        <div className="flex md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 w-[88%] max-w-[340px] pointer-events-auto justify-around items-center px-2 py-2 liquid-glass-strong rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.6)] border border-white/10 bg-black/85 backdrop-blur-lg select-none pb-safe z-50">
           {/* Mobile Gallery (Sandbox) */}
           <button
             onClick={() => {
