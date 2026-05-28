@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap');
+
+@font-face {
+  font-family: 'Dirtyline';
+  src: url('https://fonts.cdnfonts.com/s/15011/Dirtyline36DaysofType.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-heading: "Instrument Serif", serif;
+  --font-body: "Barlow", sans-serif;
+  --font-dirtyline: "Dirtyline", sans-serif;
+  
+  --radius-default: 9999px;
+  --radius-md: 9999px;
+  --radius-lg: 9999px;
+  --radius-xl: 9999px;
+  --radius: 9999px;
+
+  --color-accent-cyan: #00f2fe;
+  --color-accent-purple: #7f00ff;
+  --color-accent-pink: #f857a6;
+  --color-accent-orange: #ff5858;
+  --color-accent-yellow: #f7971e;
+
+  --color-dark-950: #000000;
+  --color-dark-900: #080808;
+  --color-dark-800: #121212;
+  --color-dark-700: #1c1c1e;
+  --color-dark-600: #2c2c2e;
+  --color-dark-500: #3a3a3c;
+
+  --animate-glow-slow: glow 4s ease-in-out infinite;
+  --animate-float-slow: float 8s ease-in-out infinite;
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+  --animate-pulse-slow: pulseSlow 6s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.2; filter: blur(40px); }
+  50% { opacity: 0.4; filter: blur(60px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(1deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.01); }
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+.liquid-glass {
+  background: rgba(10, 10, 10, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-strong {
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 12px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Responsive hero title with smooth clamp scaling */
+.hero-title {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: clamp(48px, 12vw, 220px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: white;
+  text-align: center;
+}
+
+/* Custom interactive grid overlay */
+.grid-overlay {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
+}
+
+/* Blur backdrop card overlays */
+.glow-blur {
+  filter: blur(100px);
+  pointer-events: none;
+  opacity: 0.15;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Custom Date Picker Indicator Styling (Dark Mode) */
+.custom-date-picker::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.85) contrast(1.2);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.custom-date-picker::-webkit-calendar-picker-indicator:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.08);
+}
+
+/* Horizontal scroll container with fade indicators */
+.scroll-fade-container {
+  position: relative;
+}
+.scroll-fade-container::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, rgba(0,0,0,0.8));
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Animated scroll indicator */
+.scroll-indicator {
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+/* Safe area utility for iOS notch devices */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+}
+
+/* High-performance GPU-native radial glows that simulate heavy blurs without filter: blur() overhead */
+.bg-radial-glow-purple {
+  background: radial-gradient(circle, rgba(127, 0, 255, 0.12) 0%, rgba(127, 0, 255, 0) 70%);
+}
+.bg-radial-glow-cyan {
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, rgba(0, 242, 254, 0) 70%);
+}
+.bg-radial-glow-pink {
+  background: radial-gradient(circle, rgba(248, 87, 166, 0.06) 0%, rgba(248, 87, 166, 0) 70%);
+}
+
+/* Auth specific glows with precise transparency falloffs */
+.bg-radial-glow-purple-auth {
+  background: radial-gradient(circle, rgba(127, 0, 255, 0.12) 0%, rgba(127, 0, 255, 0) 65%);
+}
+.bg-radial-glow-cyan-auth {
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, rgba(0, 242, 254, 0) 65%);
+}
